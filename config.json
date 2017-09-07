@@ -1,0 +1,22 @@
+{
+  "server": {
+    "type": "string",
+    "value": "127.0.0.1"
+  },
+  "name": {
+    "type": "string",
+    "value": "Volumio"
+  },
+  "output_device": {
+    "type": "string",
+    "value": "sysdefault"
+  },
+  "alsa_params": {
+    "type": "string",
+    "value": "80:4::"
+  },
+  "extra_params": {
+    "type": "string",
+    "value": ""
+  }
+}

@@ -1,0 +1,12 @@
+[Unit]
+Description=Squeezelite lightweight headless squeezebox emulator
+After=sound.target
+Requires=avahi-daemon.service network.target sound.target
+After=network.target avahi-daemon.service sound.target
+
+[Service]
+ExecStart=/usr/bin/squeezelite -z -s {SERVER} -n {NAME} -o {OUTPUTDEVICE}
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
