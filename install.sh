@@ -1,4 +1,4 @@
-## LMS installation script
+## Squeezelite installation script
 echo "Installing Squeezelite and its dependencies..."
 INSTALLING="/home/volumio/squeezelite-plugin.installing"
 
@@ -18,14 +18,16 @@ if [ ! -f $INSTALLING ]; then
 		chmod 755 /opt/squeezelite
 		
 		# Download and activate default unit
-		wget -O /etc/systemd/system/squeezelite.service https://raw.githubusercontent.com/Saiyato/volumio-squeezelite-plugin/master/unit/squeezelite.service
+		TMPUNIT="/home/volumio/squeezelite.service"
+		wget -O $TMPUNIT https://raw.githubusercontent.com/Saiyato/volumio-squeezelite-plugin/master/unit/squeezelite.unit-template
 		
-		sed -i s|${SERVER}||g /etc/systemd/system/squeezelite.service
-		sed -i s|${NAME}|Volumio|g /etc/systemd/system/squeezelite.service
-		sed -i s|${OUTPUT_DEVICE}|-o default|g /etc/systemd/system/squeezelite.service
-		sed -i s|${ALSA_PARAMS}|-a 80:4::|g /etc/systemd/system/squeezelite.service
-		sed -i s|${EXTRA_PARAMS}||g /etc/systemd/system/squeezelite.service
+		sed 's|${SERVER}||g' -i $TMPUNIT
+		sed 's|${NAME}|-n Volumio|g' -i $TMPUNIT
+		sed 's|${OUTPUT_DEVICE}|-o default|g' -i $TMPUNIT
+		sed 's|${ALSA_PARAMS}|-a 80:4::|g' -i $TMPUNIT
+		sed 's|${EXTRA_PARAMS}||g' -i $TMPUNIT
 		
+		mv $TMPUNIT /etc/systemd/system/squeezelite.service
 		systemctl daemon-reload
 		
 	else
@@ -34,7 +36,7 @@ if [ ! -f $INSTALLING ]; then
 	
 	rm $INSTALLING
 
-	#required to end the plugin install
+	# Required to end the plugin install
 	echo "plugininstallend"
 else
 	echo "Plugin is already installing! Not continuing..."
