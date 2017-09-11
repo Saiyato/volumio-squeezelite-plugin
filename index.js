@@ -2,6 +2,7 @@
 
 var config = new (require('v-conf'))();
 var exec = require('child_process').exec;
+var execSync = require('child_process').execSync;
 var fs = require('fs-extra');
 var libNet = require('net');
 var libQ = require('kew');
@@ -121,6 +122,19 @@ ControllerSqueezelite.prototype.getUIConfig = function() {
 	self.getConf(this.configFile);
 	self.logger.info("Loaded the previous config.");
 	
+	var cards = [];
+	cards.push({ hwAddress: "default", name: "ALSA default", description: "System-wide default audio device" });
+	var stdOut = execSync("/opt/squeezelite -l | grep '^\\s*[a-z]\\{2,10\\}:[A-Z]*=[a-z]*[A-Z,]\\{0,\\}\\(=[0-1]\\)\\{0,2\\}'").toString().split(/\r?\n/);
+	for (var line in stdOut)
+	{
+		if(stdOut[line] != "")
+		{
+			var cardObj = stdOut[line].split("-");
+			cards.push({ hwAddress: cardObj[0].toString().trim(), name: cardObj[1].toString().trim(), description: cardObj[2].toString().trim() });
+		}
+	}
+	//self.logger.info('Cards: ' + JSON.stringify(cards));
+
 	self.commandRouter.i18nJson(__dirname+'/i18n/strings_' + lang_code + '.json',
 		__dirname + '/i18n/strings_en.json',
 		__dirname + '/UIConfig.json')
@@ -132,7 +146,23 @@ ControllerSqueezelite.prototype.getUIConfig = function() {
 		uiconf.sections[0].content[1].value = self.config.get('name');
 		self.logger.info("1/2 Squeezelite settings sections loaded");
 		
-		uiconf.sections[1].content[0].value = self.config.get('output_device');
+		for (var soundcard in cards)
+		{
+			//self.logger.info('Card to add: ' + cards[soundcard].name + ' BLOB: ' + JSON.stringify(cards[soundcard]));			
+			var oLabel = cards[soundcard].hwAddress == "default" ? '[ALSA] ' + cards[soundcard].description
+			: '[(' + cards[soundcard].hwAddress.substring(0, cards[soundcard].hwAddress.indexOf(":")) + ') ' + cards[soundcard].name.substring(0, cards[soundcard].name.indexOf(",")) + '] ' + cards[soundcard].description;
+			
+			self.configManager.pushUIConfigParam(uiconf, 'sections[1].content[0].options', {
+				value: cards[soundcard].hwAddress,
+				label: oLabel
+			});
+			
+			if(self.config.get('output_device') == cards[soundcard].hwAddress)
+			{
+				uiconf.sections[1].content[0].value.value = cards[soundcard].hwAddress;
+				uiconf.sections[1].content[0].value.label = oLabel;
+			}
+		}
 		uiconf.sections[1].content[1].value = self.config.get('alsa_params');
 		uiconf.sections[1].content[2].value = self.config.get('extra_params');
 		self.logger.info("2/2 Squeezelite settings sections loaded");
@@ -208,7 +238,7 @@ ControllerSqueezelite.prototype.updateSqueezeliteAudioConfig = function (data)
 	var self = this;
 	var defer = libQ.defer();
 	
-	self.config.set('output_device', data['output_device']);
+	self.config.set('output_device', data['output_device'].value);
 	self.config.set('alsa_params', data['alsa_params']);
 	self.config.set('extra_params', data['extra_params']);
 	
@@ -341,18 +371,25 @@ ControllerSqueezelite.prototype.constructUnit = function(unitTemplate, unitFile)
 	
 	for (var rep in replacementDictionary)
 	{
-		if(replacementDictionary[rep]["replacement"] === undefined)
-				replacementDictionary[rep]["replacement"] = " ";
+		if(replacementDictionary[rep].replacement == undefined || replacementDictionary[rep].replacement == 'undefined')
+				replacementDictionary[rep].replacement = " ";
 		else
 		{
-			if (replacementDictionary[rep]["placeholder"] == '${NAME}' && self.config.get('name') != '')				
-				replacementDictionary[rep]["replacement"] = "-n " + replacementDictionary[rep]["replacement"];
-			else if (replacementDictionary[rep]["placeholder"] == '${OUTPUT_DEVICE}}' && self.config.get('output_device') != '')
-				replacementDictionary[rep]["replacement"] = "-o " + replacementDictionary[rep]["replacement"];
-			else if (replacementDictionary[rep]["placeholder"] == '${ALSA_PARAMS}}' && self.config.get('alsa_params') != '')
-				replacementDictionary[rep]["replacement"] = "-a " + replacementDictionary[rep]["replacement"];
+			if (replacementDictionary[rep].placeholder == "${NAME}" && self.config.get('name') != '')
+				replacementDictionary[rep].replacement = "-n " + replacementDictionary[rep].replacement;
+			else if (replacementDictionary[rep].placeholder == "${OUTPUT_DEVICE}")
+			{				
+				if (self.config.get('output_device') != '')
+					replacementDictionary[rep].replacement = "-o " + replacementDictionary[rep].replacement;
+				else
+					replacementDictionary[rep].replacement = "-o default";
+			}
+			else if (replacementDictionary[rep].placeholder == "${ALSA_PARAMS}" && self.config.get('alsa_params') != '')
+				replacementDictionary[rep].replacement = "-a " + replacementDictionary[rep].replacement;
 		}
 	}
+	
+	//self.logger.info('### Replacement dictionary: ' + JSON.stringify(replacementDictionary));
 	
 	self.replaceStringsInFile(unitTemplate, unitFile, replacementDictionary)
 	.then(function(activate)
@@ -383,8 +420,8 @@ ControllerSqueezelite.prototype.replaceStringsInFile = function(sourceFilePath, 
 		var tmpConf = data;
 		for (var rep in replacements)
 		{
-			tmpConf = tmpConf.replace(replacements[rep]["placeholder"], replacements[rep]["replacement"]);
-			self.logger.info('Replacing ' + replacements[rep]["placeholder"] + " with " + replacements[rep]["replacement"]);
+			tmpConf = tmpConf.replace(replacements[rep].placeholder, replacements[rep].replacement);
+			//self.logger.info('Replacing ' + replacements[rep].placeholder + " with " + replacements[rep].replacement);
 		}
 		
 		fs.writeFile(destinationFilePath, tmpConf, 'utf8', function (err) {
