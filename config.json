@@ -3,14 +3,6 @@
     "type": "boolean",
     "value":true
   },
-  "link_to_server": {
-    "type": "boolean",
-    "value":false
-  },
-  "serverAddress": {
-    "type": "string",
-    "value": "127.0.0.1"
-  },
   "name": {
     "type": "string",
     "value": "Volumio"

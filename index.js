@@ -129,9 +129,7 @@ ControllerSqueezelite.prototype.getUIConfig = function() {
 		self.logger.info("## populating UI...");
 		
 		uiconf.sections[0].content[0].value = self.config.get('enabled');
-		uiconf.sections[0].content[1].value = self.config.get('link_to_server');
-		uiconf.sections[0].content[2].value = self.config.get('server_param');
-		uiconf.sections[0].content[3].value = self.config.get('name');
+		uiconf.sections[0].content[1].value = self.config.get('name');
 		self.logger.info("1/2 Squeezelite settings sections loaded");
 		
 		uiconf.sections[1].content[0].value = self.config.get('output_device');
@@ -181,8 +179,6 @@ ControllerSqueezelite.prototype.updateSqueezeliteServerConfig = function (data)
 	var defer = libQ.defer();
 	
 	self.config.set('enabled', data['enabled']);
-	self.config.set('link_to_server', data['link_to_server']);
-	self.config.set('server_param', data['server_param']);
 	self.config.set('name', data['name']);
 	
 	self.logger.info("Successfully updated Squeezelite server configuration");
@@ -337,7 +333,6 @@ ControllerSqueezelite.prototype.constructUnit = function(unitTemplate, unitFile)
 	var defer = libQ.defer();
 	
 	var replacementDictionary = [
-		{ placeholder: "${SERVER}", replacement: self.config.get('server_param') },
 		{ placeholder: "${NAME}", replacement: self.config.get('name') },
 		{ placeholder: "${OUTPUT_DEVICE}", replacement: self.config.get('output_device') },
 		{ placeholder: "${ALSA_PARAMS}", replacement: self.config.get('alsa_params') },
@@ -350,9 +345,7 @@ ControllerSqueezelite.prototype.constructUnit = function(unitTemplate, unitFile)
 				replacementDictionary[rep]["replacement"] = " ";
 		else
 		{
-			if (replacementDictionary[rep]["placeholder"] == '${SERVER}' && self.config.get('server_param') != '' && self.config.get('link_to_server'))
-				replacementDictionary[rep]["replacement"] = "-s " + replacementDictionary[rep]["replacement"];
-			else if (replacementDictionary[rep]["placeholder"] == '${NAME}' && self.config.get('name') != '')				
+			if (replacementDictionary[rep]["placeholder"] == '${NAME}' && self.config.get('name') != '')				
 				replacementDictionary[rep]["replacement"] = "-n " + replacementDictionary[rep]["replacement"];
 			else if (replacementDictionary[rep]["placeholder"] == '${OUTPUT_DEVICE}}' && self.config.get('output_device') != '')
 				replacementDictionary[rep]["replacement"] = "-o " + replacementDictionary[rep]["replacement"];
