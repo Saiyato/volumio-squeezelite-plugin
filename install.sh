@@ -21,7 +21,6 @@ if [ ! -f $INSTALLING ]; then
 		TMPUNIT="/home/volumio/squeezelite.service"
 		wget -O $TMPUNIT https://raw.githubusercontent.com/Saiyato/volumio-squeezelite-plugin/master/unit/squeezelite.unit-template
 		
-		sed 's|${SERVER}||g' -i $TMPUNIT
 		sed 's|${NAME}|-n Volumio|g' -i $TMPUNIT
 		sed 's|${OUTPUT_DEVICE}|-o default|g' -i $TMPUNIT
 		sed 's|${ALSA_PARAMS}|-a 80:4::|g' -i $TMPUNIT
