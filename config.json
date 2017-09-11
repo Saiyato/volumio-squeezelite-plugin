@@ -1,5 +1,13 @@
 {
-  "server": {
+  "enabled": {
+    "type": "boolean",
+    "value":true
+  },
+  "link_to_server": {
+    "type": "boolean",
+    "value":false
+  },
+  "serverAddress": {
     "type": "string",
     "value": "127.0.0.1"
   },
@@ -9,7 +17,7 @@
   },
   "output_device": {
     "type": "string",
-    "value": "sysdefault"
+    "value": "default"
   },
   "alsa_params": {
     "type": "string",

@@ -1,46 +1,113 @@
 {
 	"page": {
-		"label": "TRANSLATE.LMS.LMSCONF"
+		"label": "TRANSLATE.SQUEEZELITE.SQUEEZELITECONF"
 	},
-	"sections": [{
-			"id": "section_account_logout",
+	"sections": [
+		{
+			"id": "section_serverconf",
 			"element": "section",
-			"label": "TRANSLATE.LMS.NAVIGATE_TO_SERVER",
-			"description": "TRANSLATE.LMS.D_NAVIGATE_TO_SERVER",
-			"icon": "fa-windows-maximize",
+			"label": "TRANSLATE.SQUEEZELITE.SERVER",
+			"description": "TRANSLATE.SQUEEZELITE.D_SERVER",
+			"icon": "fa-server",
+			"onSave": {
+				"type": "controller",
+				"endpoint": "music_service/squeezelite",
+				"method": "updateSqueezeliteServerConfig"
+			},
+			"saveButton": {
+				"label": "TRANSLATE.SQUEEZELITE.SAVE",
+				"data": [
+					"enabled",
+					"link_to_server",
+					"server_param",
+					"name"
+				]
+			},
 			"content": [
-			{
-				"id": "open_webconfig",
-				"element": "button",
-				"label": "Logitech Media Server",
-				"description": "Open the LMS webconsole",
-				"onClick": {
-					"type": "openUrl",
-					"url": "https://localhost:9000"
+				{
+					"id": "enabled",
+					"element": "switch",
+					"doc": "TRANSLATE.SQUEEZELITE.D_PLAYER_ENABLED",
+					"label": "TRANSLATE.SQUEEZELITE.PLAYER_ENABLED",
+					"value": true
+				},
+				{
+					"id": "link_to_server",
+					"element": "switch",
+					"doc": "TRANSLATE.SQUEEZELITE.D_LINK_TO_SERVER",
+					"label": "TRANSLATE.SQUEEZELITE.LINK_TO_SERVER",
+					"value": false
+				},
+				{
+					"id": "server_param",
+					"type":"text",
+					"element": "input",
+					"label": "TRANSLATE.SQUEEZELITE.SERVER_ADDRESS",
+					"doc": "TRANSLATE.SQUEEZELITE.D_SERVER_ADDRESS",
+					"value": "127.0.0.1",
+					"visibleIf": {
+						"field": "link_to_server",
+						"value": true
+					}
+				},
+				{
+					"id": "name",
+					"type":"text",
+					"element": "input",
+					"label": "TRANSLATE.SQUEEZELITE.INSTANCE_NAME",
+					"doc": "TRANSLATE.SQUEEZELITE.D_INSTANCE_NAME",
+					"value": "Volumio"
 				}
-			}]			
+			]
 		},
 		{
-		"id": "section_lmsconf",
-		"element": "section",
-		"label": "TRANSLATE.LMS.SERVER",
-		"description": "TRANSLATE.LMS.D_SERVER",
-		"icon": "fa-server",
-		"onSave": {
-			"type": "controller",
-			"endpoint": "music_service/lms",
-			"method": "updateLMSConfiguration"
-		},
-		"saveButton": {
-			"label": "TRANSLATE.LMS.SAVE",
-			"data": ["enabled"]
-		},
-		"content": [{
-			"id": "enabled",
-			"element": "switch",
-			"doc": "TRANSLATE.LMS.D_SERVER_ENABLED",
-			"label": "TRANSLATE.LMS.SERVER_ENABLED",
-			"value": true
-			}]
-		}]
+			"id": "section_audioconf",
+			"element": "section",
+			"label": "TRANSLATE.SQUEEZELITE.AUDIO",
+			"description": "TRANSLATE.SQUEEZELITE.D_AUDIO",
+			"icon": "fa-volume-up",
+			"onSave": {
+				"type": "controller",
+				"endpoint": "music_service/squeezelite",
+				"method": "updateSqueezeliteAudioConfig"
+			},
+			"saveButton": {
+				"label": "TRANSLATE.SQUEEZELITE.SAVE",
+				"data": [
+					"output_device",
+					"alsa_params",
+					"extra_params"
+				]
+			},
+			"content": [
+				{
+					"id": "output_device",
+					"element": "select",
+					"label": "TRANSLATE.SQUEEZELITE.OUTPUT_DEVICE",
+					"doc": "TRANSLATE.SQUEEZELITE.D_OUTPUT_DEVICE",					
+					"value": {
+						"value": "default",
+						"label": "default"
+					},
+					"options": []
+				},
+				{
+					"id": "alsa_params",
+					"type":"text",
+					"element": "input",
+					"label": "TRANSLATE.SQUEEZELITE.ALSAPARAMS",
+					"doc": "TRANSLATE.SQUEEZELITE.D_ALSAPARAMS",
+					"value": "80:4::"
+				},
+				{
+					"id": "extra_params",
+					"type":"text",
+					"element": "input",
+					"label": "TRANSLATE.SQUEEZELITE.EXTRAPARAMS",
+					"doc": "TRANSLATE.SQUEEZELITE.D_EXTRAPARAMS",
+					"value": ""
+				}
+			]
+		}
+	]
 }

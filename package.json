@@ -1,7 +1,7 @@
 {
-  "name": "lms",
-  "version": "1.0.8",
-  "description": "Logitech Media Server integration",
+  "name": "squeezelite",
+  "version": "1.0.3",
+  "description": "Squeezelite player",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -9,7 +9,7 @@
   "author": "Saiyato",
   "license": "GPL-3.0",
   "volumio_info": {
-    "prettyName": "Logitech Media Server",
+    "prettyName": "Squeezelite player",
     "icon": "fa fa-music",
     "plugin_type": "music_service"
   },
@@ -42,19 +42,19 @@
   "devDependencies": {},
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Saiyato/volumio-lms-plugin.git"
+    "url": "git+https://github.com/Saiyato/volumio-squeezelite-plugin.git"
   },
   "keywords": [
-    "lms",
+    "squeezelite",
     "multiroom",
     "audio",
 	"Logitech",
 	"Media",
-	"Server",
+	"Player",
     "volumio"
   ],
   "bugs": {
-    "url": "https://github.com/Saiyato/volumio-lms-plugin/issues"
+    "url": "https://github.com/Saiyato/volumio-squeezelite-plugin/issues"
   },
-  "homepage": "https://github.com/Saiyato/volumio-lms-plugin#readme"
+  "homepage": "https://github.com/Saiyato/volumio-squeezelite-plugin#readme"
 }

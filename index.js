@@ -3,17 +3,14 @@
 var config = new (require('v-conf'))();
 var exec = require('child_process').exec;
 var fs = require('fs-extra');
-var ifconfig = require('wireless-tools/ifconfig');
-var ip = require('ip');
 var libNet = require('net');
 var libQ = require('kew');
 var net = require('net');
-var currentIp = '';
 
-// Define the ControllerLMS class
-module.exports = ControllerLMS;
+// Define the ControllerSqueezelite class
+module.exports = ControllerSqueezelite;
 
-function ControllerLMS(context) 
+function ControllerSqueezelite(context) 
 {
 	var self = this;
 
@@ -24,10 +21,10 @@ function ControllerLMS(context)
 
 };
 
-ControllerLMS.prototype.onVolumioStart = function()
+ControllerSqueezelite.prototype.onVolumioStart = function()
 {
 	var self = this;
-	self.logger.info("LMS initiated");
+	self.logger.info("Squeezelite initiated");
 	
 	this.configFile = this.commandRouter.pluginManager.getConfigurationFile(this.context, 'config.json');
 	self.getConf(this.configFile);
@@ -35,68 +32,68 @@ ControllerLMS.prototype.onVolumioStart = function()
 	return libQ.resolve();	
 };
 
-ControllerLMS.prototype.getConfigurationFiles = function()
+ControllerSqueezelite.prototype.getConfigurationFiles = function()
 {
 	return ['config.json'];
 };
 
 // Plugin methods -----------------------------------------------------------------------------
-ControllerLMS.prototype.onStop = function() {
+ControllerSqueezelite.prototype.onStop = function() {
 	var self = this;
 	var defer = libQ.defer();
 
-	self.stopService('logitechmediaserver')
+	self.stopService('squeezelite')
 	.then(function(edefer)
 	{
 		defer.resolve();
 	})
 	.fail(function(e)
 	{
-		self.commandRouter.pushToastMessage('error', "Stopping failed", "Could not stop the LMS plugin in a fashionable manner, error: " + e);
+		self.commandRouter.pushToastMessage('error', "Stopping failed", "Could not stop the Squeezelite plugin in a fashionable manner, error: " + e);
 		defer.reject(new error());
 	});
 
 	return defer.promise;
 };
 
-ControllerLMS.prototype.stop = function() {
+ControllerSqueezelite.prototype.stop = function() {
 	var self = this;
 	var defer = libQ.defer();
 
-	self.stopService('logitechmediaserver')
+	self.stopService('squeezelite')
 	.then(function(edefer)
 	{
 		defer.resolve();
 	})
 	.fail(function(e)
 	{
-		self.commandRouter.pushToastMessage('error', "Stopping failed", "Could not stop the LMS plugin in a fashionable manner, error: " + e);
+		self.commandRouter.pushToastMessage('error', "Stopping failed", "Could not stop the Squeezelite plugin in a fashionable manner, error: " + e);
 		defer.reject(new error());
 	});
 
 	return defer.promise;
 };
 
-ControllerLMS.prototype.onStart = function() {
+ControllerSqueezelite.prototype.onStart = function() {
 	var self = this;
 	var defer = libQ.defer();
 
-	self.restartService('logitechmediaserver', true)
+	self.restartService('squeezelite', true)
 	.then(function(edefer)
 	{
 		defer.resolve();
 	})
 	.fail(function(e)
 	{
-		self.commandRouter.pushToastMessage('error', "Startup failed", "Could not start the LMS plugin in a fashionable manner.");
-		self.logger.info("Could not start the LMS plugin in a fashionable manner.");
+		self.commandRouter.pushToastMessage('error', "Startup failed", "Could not start the Squeezelite plugin in a fashionable manner.");
+		self.logger.info("Could not start the Squeezelite plugin in a fashionable manner.");
 		defer.reject(new error());
 	});
 
 	return defer.promise;
 };
 
-ControllerLMS.prototype.onRestart = function() 
+ControllerSqueezelite.prototype.onRestart = function() 
 {
 	// Do nothing
 	self.logger.info("performing onRestart action");
@@ -104,25 +101,24 @@ ControllerLMS.prototype.onRestart = function()
 	var self = this;
 };
 
-ControllerLMS.prototype.onInstall = function() 
+ControllerSqueezelite.prototype.onInstall = function() 
 {
 	self.logger.info("performing onInstall action");
 	
 	var self = this;
 };
 
-ControllerLMS.prototype.onUninstall = function() 
+ControllerSqueezelite.prototype.onUninstall = function() 
 {
 	// Perform uninstall tasks here!
 };
 
-ControllerLMS.prototype.getUIConfig = function() {
+ControllerSqueezelite.prototype.getUIConfig = function() {
     var self = this;
 	var defer = libQ.defer();    
     var lang_code = this.commandRouter.sharedVars.get('language_code');
 
 	self.getConf(this.configFile);
-	self.getCurrentIP();
 	self.logger.info("Loaded the previous config.");
 	
 	self.commandRouter.i18nJson(__dirname+'/i18n/strings_' + lang_code + '.json',
@@ -131,14 +127,18 @@ ControllerLMS.prototype.getUIConfig = function() {
     .then(function(uiconf)
     {
 		self.logger.info("## populating UI...");
-		var consoleUrl = 'http://' + currentIp + ':9000';
 		
-		uiconf.sections[0].content[0].onClick.url = consoleUrl;
-		uiconf.sections[1].content[0].value = self.config.get('enabled');
-		self.logger.info("2/2 LMS settings loaded");
+		uiconf.sections[0].content[0].value = self.config.get('enabled');
+		uiconf.sections[0].content[1].value = self.config.get('link_to_server');
+		uiconf.sections[0].content[2].value = self.config.get('server_param');
+		uiconf.sections[0].content[3].value = self.config.get('name');
+		self.logger.info("1/2 Squeezelite settings sections loaded");
 		
-		if(self.config.get('enabled') == false)
-			uiconf.sections.splice(0, 1);
+		uiconf.sections[1].content[0].value = self.config.get('output_device');
+		uiconf.sections[1].content[1].value = self.config.get('alsa_params');
+		uiconf.sections[1].content[2].value = self.config.get('extra_params');
+		self.logger.info("2/2 Squeezelite settings sections loaded");
+
 		self.logger.info("Populated config screen.");
 		
 		defer.resolve(uiconf);
@@ -151,7 +151,7 @@ ControllerLMS.prototype.getUIConfig = function() {
 	return defer.promise;
 };
 
-ControllerLMS.prototype.setUIConfig = function(data) {
+ControllerSqueezelite.prototype.setUIConfig = function(data) {
 	var self = this;
 	
 	self.logger.info("Updating UI config");
@@ -160,7 +160,7 @@ ControllerLMS.prototype.setUIConfig = function(data) {
 	return libQ.resolve();
 };
 
-ControllerLMS.prototype.getConf = function(configFile) {
+ControllerSqueezelite.prototype.getConf = function(configFile) {
 	var self = this;
 	this.config = new (require('v-conf'))()
 	this.config.loadFile(configFile)
@@ -168,59 +168,121 @@ ControllerLMS.prototype.getConf = function(configFile) {
 	return libQ.resolve();
 };
 
-ControllerLMS.prototype.setConf = function(conf) {
+ControllerSqueezelite.prototype.setConf = function(conf) {
 	var self = this;
 	return libQ.resolve();
 };
 
 // Public Methods ---------------------------------------------------------------------------------------
 
-ControllerLMS.prototype.updateLMSConfiguration = function (data)
+ControllerSqueezelite.prototype.updateSqueezeliteServerConfig = function (data)
 {
 	var self = this;
 	var defer = libQ.defer();
 	
 	self.config.set('enabled', data['enabled']);
-	self.logger.info("Successfully updated LMS configuration");
+	self.config.set('link_to_server', data['link_to_server']);
+	self.config.set('server_param', data['server_param']);
+	self.config.set('name', data['name']);
+	
+	self.logger.info("Successfully updated Squeezelite server configuration");
 
-	if(data['enabled'] == true)
-	{
-		self.restartService("logitechmediaserver", false)
-		.then(function(edefer)
+	self.constructUnit(__dirname + "/unit/squeezelite.unit-template", __dirname + "/unit/squeezelite.service")
+	.then(function(stopIfNeeded){
+		if(self.config.get('enabled') != true)
 		{
-			defer.resolve();
-		})
-		.fail(function()
-		{
-			self.commandRouter.pushToastMessage('error', "Restart failed", "Restarting logitechmediaserver failed with error: " + error);
-			defer.reject(new Error());
-		});
-	}
-	else
-	{
-		self.stopService("logitechmediaserver")
-		.then(function(edefer)
-		{
-			defer.resolve();
-		})
-		.fail(function()
-		{
-			self.commandRouter.pushToastMessage('error', "Stopping failed", "Stopping logitechmediaserver failed with error: " + error);
-			defer.reject(new Error());
-		});
-	}
+			self.stopService("squeezelite")
+			.then(function(edefer)
+			{
+				defer.resolve();
+			})
+			.fail(function()
+			{
+				self.commandRouter.pushToastMessage('error', "Stopping failed", "Stopping Squeezelite failed with error: " + error);
+				defer.reject(new Error());
+			});
+		}
+	});
 	
 	return defer.promise;
 };
 
-ControllerLMS.prototype.restartService = function (serviceName, boot)
+ControllerSqueezelite.prototype.updateSqueezeliteAudioConfig = function (data)
 {
 	var self = this;
-	var defer=libQ.defer();
+	var defer = libQ.defer();
+	
+	self.config.set('output_device', data['output_device']);
+	self.config.set('alsa_params', data['alsa_params']);
+	self.config.set('extra_params', data['extra_params']);
+	
+	self.logger.info("Successfully updated Squeezelite audio configuration");
+
+	self.constructUnit(__dirname + "/unit/squeezelite.unit-template", __dirname + "/unit/squeezelite.service")
+	.then(function(stopIfNeeded){
+		if(self.config.get('enabled') != true)
+		{
+			self.stopService("squeezelite")
+			.then(function(edefer)
+			{
+				defer.resolve();
+			})
+			.fail(function()
+			{
+				self.commandRouter.pushToastMessage('error', "Stopping failed", "Stopping Squeezelite failed with error: " + error);
+				defer.reject(new Error());
+			});
+		}
+	});
+	
+	return defer.promise;
+};
+
+ControllerSqueezelite.prototype.moveAndReloadService = function (unitTemplate, unitFile, serviceName)
+{
+	var self = this;
+	var defer = libQ.defer();
+
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/cp " + unitTemplate + " " + unitFile;
+	
+	exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
+		if (error !== null) {
+			self.commandRouter.pushConsoleMessage('The following error occurred while moving ' + serviceName + ': ' + error);
+			self.commandRouter.pushToastMessage('error', "Moving service failed", "Stopping " + serviceName + " failed with error: " + error);
+			defer.reject();
+		}
+		else {
+			self.commandRouter.pushConsoleMessage(serviceName + ' moved');
+			self.commandRouter.pushToastMessage('success', "Moved", "Moved " + serviceName + ".");
+		}
+	});
+		
+	command = "/bin/echo volumio | /usr/bin/sudo -S systemctl daemon-reload";
+	exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
+		if (error !== null) {
+			self.commandRouter.pushConsoleMessage('The following error occurred while reloading ' + serviceName + ': ' + error);
+			self.commandRouter.pushToastMessage('error', "Reloading service failed", "Reloading " + serviceName + " failed with error: " + error);
+			defer.reject();
+		}
+		else {
+			self.commandRouter.pushConsoleMessage(serviceName + ' reloaded');
+			self.commandRouter.pushToastMessage('success', "Reloading", "Reloading " + serviceName + ".");
+			defer.resolve();
+		}
+	});
+			
+
+	return defer.promise;
+};
+
+ControllerSqueezelite.prototype.restartService = function (serviceName, boot)
+{
+	var self = this;
+	var defer = libQ.defer();
 
 	if(self.config.get('enabled'))
 	{
-		var command = "/usr/bin/sudo /bin/systemctl restart " + serviceName;
+		var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/systemctl restart " + serviceName;
 		
 		exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
 			if (error !== null) {
@@ -246,12 +308,12 @@ ControllerLMS.prototype.restartService = function (serviceName, boot)
 	return defer.promise;
 };
 
-ControllerLMS.prototype.stopService = function (serviceName)
+ControllerSqueezelite.prototype.stopService = function (serviceName)
 {
 	var self = this;
-	var defer=libQ.defer();
+	var defer = libQ.defer();
 
-	var command = "/usr/bin/sudo /bin/systemctl stop " + serviceName;
+	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/systemctl stop " + serviceName;
 	
 	exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
 		if (error !== null) {
@@ -269,55 +331,82 @@ ControllerLMS.prototype.stopService = function (serviceName)
 	return defer.promise;
 };
 
-ControllerLMS.prototype.replaceStringInFile = function (pattern, value, inFile)
+ControllerSqueezelite.prototype.constructUnit = function(unitTemplate, unitFile)
 {
 	var self = this;
 	var defer = libQ.defer();
-	var castValue;
 	
-	if(value == true || value == false)
-			castValue = ~~value;
-	else
-		castValue = value;
-
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/sed -i -- 's|" + pattern + ".*|" + castValue + "|g' " + inFile;
-
-	exec(command, {uid:1000, gid:1000}, function (error, stout, stderr) {
-		if(error)
-			console.log(stderr);
-
+	var replacementDictionary = [
+		{ placeholder: "${SERVER}", replacement: self.config.get('server_param') },
+		{ placeholder: "${NAME}", replacement: self.config.get('name') },
+		{ placeholder: "${OUTPUT_DEVICE}", replacement: self.config.get('output_device') },
+		{ placeholder: "${ALSA_PARAMS}", replacement: self.config.get('alsa_params') },
+		{ placeholder: "${EXTRA_PARAMS}", replacement: self.config.get('extra_params') }
+	];
+	
+	for (var rep in replacementDictionary)
+	{
+		if(replacementDictionary[rep]["replacement"] === undefined)
+				replacementDictionary[rep]["replacement"] = " ";
+		else
+		{
+			if (replacementDictionary[rep]["placeholder"] == '${SERVER}' && self.config.get('server_param') != '' && self.config.get('link_to_server'))
+				replacementDictionary[rep]["replacement"] = "-s " + replacementDictionary[rep]["replacement"];
+			else if (replacementDictionary[rep]["placeholder"] == '${NAME}' && self.config.get('name') != '')				
+				replacementDictionary[rep]["replacement"] = "-n " + replacementDictionary[rep]["replacement"];
+			else if (replacementDictionary[rep]["placeholder"] == '${OUTPUT_DEVICE}}' && self.config.get('output_device') != '')
+				replacementDictionary[rep]["replacement"] = "-o " + replacementDictionary[rep]["replacement"];
+			else if (replacementDictionary[rep]["placeholder"] == '${ALSA_PARAMS}}' && self.config.get('alsa_params') != '')
+				replacementDictionary[rep]["replacement"] = "-a " + replacementDictionary[rep]["replacement"];
+		}
+	}
+	
+	self.replaceStringsInFile(unitTemplate, unitFile, replacementDictionary)
+	.then(function(activate)
+	{
+		self.moveAndReloadService(unitFile, '/etc/systemd/system/squeezelite.service', 'Squeezelite');
+	})
+	.then(function(resolve){
+		self.restartService('squeezelite', false);
 		defer.resolve();
+	})
+	.fail(function(resolve){
+		defer.reject();
 	});
 	
 	return defer.promise;
-};
+}
 
-ControllerLMS.prototype.getCurrentIP = function () {
-    var self = this;
-    var defer = libQ.defer();
-	var ipaddr = '';
+ControllerSqueezelite.prototype.replaceStringsInFile = function(sourceFilePath, destinationFilePath, replacements)
+{
+	var self = this;
+	var defer = libQ.defer();
 	
-    ifconfig.status('wlan0', function(err, status) 
-	{
-        if (status != undefined)
-		{
-            if (status.ipv4_address != undefined) 
-			{
-                currentIp = status.ipv4_address;
-                defer.resolve(ipaddr);
-            } 
-			else 
-			{
-                currentIp = ip.address();
-                defer.resolve(ipaddr);
-            }
-        }
-		else
-		{
-			// Try again, but now only ethernet
-			currentIp = ip.address();
-			defer.resolve(ipaddr);
+	fs.readFile(sourceFilePath, 'utf8', function (err, data) {
+		if (err) {
+			defer.reject(new Error(err));
 		}
-    });
-    return defer.promise;
+		
+		var tmpConf = data;
+		for (var rep in replacements)
+		{
+			tmpConf = tmpConf.replace(replacements[rep]["placeholder"], replacements[rep]["replacement"]);
+			self.logger.info('Replacing ' + replacements[rep]["placeholder"] + " with " + replacements[rep]["replacement"]);
+		}
+		
+		fs.writeFile(destinationFilePath, tmpConf, 'utf8', function (err) {
+                if (err)
+				{
+					self.commandRouter.pushConsoleMessage('Could not write the script with error: ' + err);
+                    defer.reject(new Error(err));
+				}
+                else 
+				{
+					self.logger.info('New unit-file created!');
+					defer.resolve();
+				}
+        });
+	});
+	
+	return defer.promise;
 };

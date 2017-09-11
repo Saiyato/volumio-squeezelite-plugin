@@ -1,12 +1,22 @@
 {
-	"LMS":{
-	"LMSCONF":"Logitech Media Server Configuration",
-		"SERVER":"Configure server",
-		"D_CONFIG":"The below setting will control whether the Logitech Media Server service will start on boot or not.",
-		"SERVER_ENABLED":"Enable auto-start of service",		
-		"D_SERVER_ENABLED":"If set to ON the LMS-server will start on boot, else you must manually start the service to use it.",
-		"NAVIGATE_TO_SERVER":"Webconsole",
-		"D_NAVIGATE_TO_SERVER":"Click the button to open the Logitech Media Server web page.",
+	"SQUEEZELITE":{
+	"SQUEEZELITECONF":"Squeezelite Configuration",
+	"SERVER":"Configure server",
+	"D_CONFIG":"The below settings are for server relation configuration.",
+		"PLAYER_ENABLED":"Enable auto-start of service",		
+		"D_PLAYER_ENABLED":"If set to ON the Squeezelite-server will start on boot, else you must manually start the service to use it.",
+		"SERVER_ADDRESS":"Server IP",		
+		"D_SERVER_ADDRESS":"Fill in the IP-address of the server you want to initially connect to.",
+		"INSTANCE_NAME":"Instance name",
+		"D_INSTANCE_NAME":"Controls how the player will appear in the LMS webconsole.",
+	"AUDIO":"Configure audio output settings",
+	"D_AUDIO":"Sound output can be controlled with the below settings.",
+		"OUTPUT_DEVICE":"Output device",		
+		"D_OUTPUT_DEVICE":"Choose the output device you want to use for this Squeezelite instance.",
+		"ALSAPARAMS":"ALSA Parameters",		
+		"D_ALSAPARAMS":"Fill in the ALSA parameters, don't change them if you have no idea what you are doing (default = 80:4::).",
+		"EXTRAPARAMS":"Extra Parameters",
+		"D_EXTRAPARAMS":"If you want to use additional parameters, this is where you want to do this.",
 	"SAVE": "Save"
 	}
 }
