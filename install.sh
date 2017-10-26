@@ -11,7 +11,7 @@ if [ ! -f $INSTALLING ]; then
 		# Download latest squeezelite executable
 		echo "Downloading squeezelite..."
 		mkdir /home/volumio/logitechmediaserver
-		wget -O /opt/squeezelite http://ralph_irving.users.sourceforge.net/pico/squeezelite-armv6hf-noffmpeg
+		wget -O /opt/squeezelite https://github.com/Saiyato/volumio-squeezelite-plugin/raw/master/known_working_versions/squeezelite-armv6hf-noffmpeg
 				
 		# Fix executable rights
 		chown volumio:volumio /opt/squeezelite

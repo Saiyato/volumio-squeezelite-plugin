@@ -1,6 +1,6 @@
 {
   "name": "squeezelite",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Squeezelite player",
   "main": "index.js",
   "scripts": {
