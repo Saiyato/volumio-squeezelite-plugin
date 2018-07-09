@@ -4,15 +4,15 @@
 	},
 	"sections": [
 		{
-			"id": "section_serverconf",
+			"id": "section_serviceconf",
 			"element": "section",
-			"label": "TRANSLATE.SQUEEZELITE.SERVER",
-			"description": "TRANSLATE.SQUEEZELITE.D_SERVER",
-			"icon": "fa-server",
+			"label": "TRANSLATE.SQUEEZELITE.SERVICE",
+			"description": "TRANSLATE.SQUEEZELITE.D_SERVICE",
+			"icon": "fa-cogs",
 			"onSave": {
 				"type": "controller",
 				"endpoint": "music_service/squeezelite",
-				"method": "updateSqueezeliteServerConfig"
+				"method": "updateSqueezeliteServiceConfig"
 			},
 			"saveButton": {
 				"label": "TRANSLATE.SQUEEZELITE.SAVE",

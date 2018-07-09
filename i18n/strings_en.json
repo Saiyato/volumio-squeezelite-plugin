@@ -1,10 +1,10 @@
 {
 	"SQUEEZELITE":{
 	"SQUEEZELITECONF":"Squeezelite Configuration",
-	"SERVER":"Configure server",
-	"D_CONFIG":"The below settings are for server relation configuration.",
+	"SERVICE":"Configure service",
+	"D_SERVICE":"The below settings are for service configuration.",
 		"PLAYER_ENABLED":"Enable auto-start of service",		
-		"D_PLAYER_ENABLED":"If set to ON the Squeezelite-server will start on boot, else you must manually start the service to use it.",
+		"D_PLAYER_ENABLED":"If set to ON the Squeezelite-service will start on boot, else you must manually start the service to use it.",
 		"INSTANCE_NAME":"Instance name",
 		"D_INSTANCE_NAME":"Controls how the player will appear in the LMS webconsole.",
 	"AUDIO":"Configure audio output settings",
