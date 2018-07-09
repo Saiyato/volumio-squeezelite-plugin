@@ -285,7 +285,7 @@ ControllerSqueezelite.prototype.moveAndReloadService = function (unitTemplate, u
 	var self = this;
 	var defer = libQ.defer();
 
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/cp " + unitTemplate + " " + unitFile;
+	var command = "/bin/cp " + unitTemplate + " " + unitFile;
 	
 	exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
 		if (error !== null) {
@@ -299,7 +299,7 @@ ControllerSqueezelite.prototype.moveAndReloadService = function (unitTemplate, u
 		}
 	});
 		
-	command = "/bin/echo volumio | /usr/bin/sudo -S systemctl daemon-reload";
+	command = "systemctl daemon-reload";
 	exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
 		if (error !== null) {
 			self.commandRouter.pushConsoleMessage('The following error occurred while reloading ' + serviceName + ': ' + error);
@@ -324,7 +324,7 @@ ControllerSqueezelite.prototype.restartService = function (serviceName, boot)
 
 	if(self.config.get('enabled'))
 	{
-		var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/systemctl restart " + serviceName;
+		var command = "/bin/systemctl restart " + serviceName;
 		
 		exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
 			if (error !== null) {
@@ -355,7 +355,7 @@ ControllerSqueezelite.prototype.stopService = function (serviceName)
 	var self = this;
 	var defer = libQ.defer();
 
-	var command = "/bin/echo volumio | /usr/bin/sudo -S /bin/systemctl stop " + serviceName;
+	var command = "/bin/systemctl stop " + serviceName;
 	
 	exec(command, {uid:1000,gid:1000}, function (error, stdout, stderr) {
 		if (error !== null) {
@@ -411,7 +411,7 @@ ControllerSqueezelite.prototype.constructUnit = function(unitTemplate, unitFile)
 	self.replaceStringsInFile(unitTemplate, unitFile, replacementDictionary)
 	.then(function(activate)
 	{
-		self.moveAndReloadService(unitFile, '/etc/systemd/system/squeezelite.service', 'Squeezelite');
+		self.moveAndReloadService(unitFile, '/data/plugins/music_service/squeezelite/unit/squeezelite.service', 'Squeezelite');
 	})
 	.then(function(resolve){
 		self.restartService('squeezelite', false);

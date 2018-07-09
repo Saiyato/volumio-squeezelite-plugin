@@ -17,7 +17,7 @@ if [ ! -f $INSTALLING ]; then
 		chmod 755 /opt/squeezelite
 		
 		# Download and activate default unit
-		TMPUNIT="/home/volumio/squeezelite.service"
+		TMPUNIT="/data/plugins/music_service/squeezelite/squeezelite.service"
 		wget -O $TMPUNIT https://raw.githubusercontent.com/Saiyato/volumio-squeezelite-plugin/master/unit/squeezelite.unit-template
 		
 		sed 's|${NAME}|-n Volumio|g' -i $TMPUNIT
@@ -25,7 +25,8 @@ if [ ! -f $INSTALLING ]; then
 		sed 's|${ALSA_PARAMS}|-a 80:4::|g' -i $TMPUNIT
 		sed 's|${EXTRA_PARAMS}||g' -i $TMPUNIT
 		
-		mv $TMPUNIT /etc/systemd/system/squeezelite.service
+		#mv $TMPUNIT /etc/systemd/system/squeezelite.service
+		ln -fs /data/plugins/music_service/squeezelite/unit/squeezelite.service /etc/systemd/system/squeezelite.service
 		systemctl daemon-reload
 		
 	else
