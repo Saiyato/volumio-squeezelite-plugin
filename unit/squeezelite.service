@@ -5,7 +5,7 @@ Requires=avahi-daemon.service network.target sound.target
 After=network.target avahi-daemon.service sound.target
 
 [Service]
-ExecStart=/opt/squeezelite -n Volumio -o default -a 80:4:: 
+ExecStart=/opt/squeezelite -n Volumio -o default -a 80:4:: -s 127.0.0.1
 Restart=always
 
 [Install]

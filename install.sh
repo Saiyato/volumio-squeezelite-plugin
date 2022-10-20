@@ -11,10 +11,16 @@ if [ ! -f $INSTALLING ]; then
 		# Download squeezelite executable
 		dist=$(cat /etc/os-release | grep '^VERSION=' | cut -d '(' -f2 | tr -d ')"')
 		arch=$(arch)
+    variant=$(cat /etc/os-release | grep '^VOLUMIO_VARIANT=' | cut -d '=' -f2)
 		
 		if [ $dist = "jessie" ] && ( [ $arch = "armv6l" ] || [ $arch = "armv7l" ] || [ $arch = "aarch64" ] ); then
-			echo "Using squeezelite 1.8.7 for compatibility reasons (detected Debian Jessie)"
-			ln -fs /data/plugins/music_service/squeezelite/known_working_versions/jessie/squeezelite-armv6hf-volumio /opt/squeezelite
+      if [ $variant = "minidspshd" ]; then
+        echo "Using squeezelite 1.9.9 armel architecture"
+        ln -fs /data/plugins/music_service/squeezelite/known_working_versions/jessie/squeezelite-armv-minidspshd /opt/squeezelite
+      else
+        echo "Using squeezelite 1.8.7 for compatibility reasons (detected Debian Jessie)"
+			  ln -fs /data/plugins/music_service/squeezelite/known_working_versions/jessie/squeezelite-armv6hf-volumio /opt/squeezelite
+      fi
 		elif [ $dist = "buster" ] && ( [ $arch = "armv6l" ] || [ $arch = "armv7l" ] ); then
 			echo "Using squeezelite 1.9.9 for armhf architecture"
 			ln -fs /data/plugins/music_service/squeezelite/known_working_versions/squeezelite-1.9.9.1392-armhf /opt/squeezelite
@@ -40,6 +46,7 @@ if [ ! -f $INSTALLING ]; then
 		sed 's|${NAME}|-n Volumio|g' -i $TMPUNIT
 		sed 's|${OUTPUT_DEVICE}|-o default|g' -i $TMPUNIT
 		sed 's|${ALSA_PARAMS}|-a 80:4::|g' -i $TMPUNIT
+    sed 's|${SERVER_PARAMS}|-s 127.0.0.1|g' -i $TMPUNIT
 		sed 's|${EXTRA_PARAMS}||g' -i $TMPUNIT
 		
 		#mv $TMPUNIT /etc/systemd/system/squeezelite.service

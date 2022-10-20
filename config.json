@@ -19,6 +19,10 @@
     "type": "string",
     "value": "80:4::"
   },
+  "server_params": {
+    "type": "string",
+    "value": "127.0.0.1"
+  },
   "extra_params": {
     "type": "string",
     "value": ""

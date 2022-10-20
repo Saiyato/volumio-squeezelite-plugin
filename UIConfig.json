@@ -56,6 +56,7 @@
 					"output_device",
 					"soundcard_timeout",
 					"alsa_params",
+          "server_params",
 					"extra_params"
 				]
 			},
@@ -89,6 +90,14 @@
 					"label": "TRANSLATE.SQUEEZELITE.ALSAPARAMS",
 					"doc": "TRANSLATE.SQUEEZELITE.D_ALSAPARAMS",
 					"value": "80:4::"
+				},
+        {
+					"id": "server_params",
+					"type":"text",
+					"element": "input",
+					"label": "TRANSLATE.SQUEEZELITE.SERVERPARAMS",
+					"doc": "TRANSLATE.SQUEEZELITE.D_SERVERPARAMS",
+					"value": "127.0.0.1"
 				},
 				{
 					"id": "extra_params",
