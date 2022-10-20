@@ -3,24 +3,19 @@ echo "Installing Squeezelite and its dependencies..."
 INSTALLING="/home/volumio/squeezelite-plugin.installing"
 
 if [ ! -f $INSTALLING ]; then
+	/bin/touch $INSTALLING
 
-	touch $INSTALLING
-
-	if [ ! -d /opt/squeezelite ];
-	then 
-		# Download squeezelite executable
+	if [ ! -d /opt/squeezelite ]; then
 		dist=$(cat /etc/os-release | grep '^VERSION=' | cut -d '(' -f2 | tr -d ')"')
 		arch=$(arch)
-    variant=$(cat /etc/os-release | grep '^VOLUMIO_VARIANT=' | cut -d '=' -f2)
-		
-		if [ $dist = "jessie" ] && ( [ $arch = "armv6l" ] || [ $arch = "armv7l" ] || [ $arch = "aarch64" ] ); then
-      if [ $variant = "minidspshd" ]; then
-        echo "Using squeezelite 1.9.9 armel architecture"
-        ln -fs /data/plugins/music_service/squeezelite/known_working_versions/jessie/squeezelite-armv-minidspshd /opt/squeezelite
-      else
-        echo "Using squeezelite 1.8.7 for compatibility reasons (detected Debian Jessie)"
-			  ln -fs /data/plugins/music_service/squeezelite/known_working_versions/jessie/squeezelite-armv6hf-volumio /opt/squeezelite
-      fi
+    variant=$(cat /etc/os-release | grep '^VOLUMIO_VARIANT=' | cut -d '=' -f2 | tr -d '"')
+
+    if [ $dist = "jessie" ] && [ $variant = "minidspshd" ] && ( [ $arch = "armv6l" ] || [ $arch = "armv7l" ] || [ $arch = "aarch64" ] ); then
+      echo "Using squeezelite 1.9.9 armel architecture (detected minidsp SHD)"
+      ln -fs /data/plugins/music_service/squeezelite/known_working_versions/jessie/squeezelite-arm-minidspshd /opt/squeezelite
+    elif [ $dist = "jessie" ] && ( [ $arch = "armv6l" ] || [ $arch = "armv7l" ] || [ $arch = "aarch64" ] ); then
+      echo "Using squeezelite 1.8.7 for compatibility reasons (detected Debian Jessie)"
+			ln -fs /data/plugins/music_service/squeezelite/known_working_versions/jessie/squeezelite-armv6hf-volumio /opt/squeezelite
 		elif [ $dist = "buster" ] && ( [ $arch = "armv6l" ] || [ $arch = "armv7l" ] ); then
 			echo "Using squeezelite 1.9.9 for armhf architecture"
 			ln -fs /data/plugins/music_service/squeezelite/known_working_versions/squeezelite-1.9.9.1392-armhf /opt/squeezelite
