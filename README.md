@@ -24,6 +24,7 @@ INSTALL
 1. install the available squeezelite-plugin on volumio
 
 2. log into miniDSP SHD by SSH and execute the following command:
+
 wget -O - https://github.com/itskaefer/volumio-squeezelite-plugin/raw/master/update_squeezelite_minidsp.sh | sudo sh
 
 3. go to the "installed plugins" in volumio and save the configuration of the squeezelite plugin to enable changes
