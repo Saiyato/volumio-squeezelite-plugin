@@ -1,0 +1,30 @@
+{
+  "enabled": {
+    "type": "boolean",
+    "value":true
+  },
+  "name": {
+    "type": "string",
+    "value": "Volumio"
+  },
+  "output_device": {
+    "type": "string",
+    "value": "default"
+  },
+  "soundcard_timeout": {
+    "type": "string",
+    "value": "2"
+  },
+  "alsa_params": {
+    "type": "string",
+    "value": "80:4::"
+  },
+  "server_params": {
+    "type": "string",
+    "value": "127.0.0.1"
+  },
+  "extra_params": {
+    "type": "string",
+    "value": "-r 44100-196000 -R vE:::24"
+  }
+}
