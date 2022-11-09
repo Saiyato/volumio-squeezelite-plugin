@@ -30,6 +30,8 @@ if [ -d $pluginPath/squeezelite ]; then
   echo "Cleanup ..."
   rm -r /tmp/squeezelite
   rm /tmp/squeezelite.zip
+  echo "Restart volumio ..."
+  systemctl restart volumio
 else
   echo "Please first install squeezelite plugin via webinterface."
 fi
