@@ -30,6 +30,7 @@ if [ -d $pluginPath/squeezelite ]; then
   fi
   echo "Fix permissions ..."
   chown -R volumio:volumio $pluginPath/squeezelite
+  chmod -R +x $pluginPath/squeezelite/known_working_versions
   echo "Cleanup ..."
   rm -r /tmp/squeezelite
   rm /tmp/squeezelite.zip
