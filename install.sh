@@ -64,6 +64,9 @@ if [ ! -f $INSTALLING ]; then
     fi
 		
 		#mv $TMPUNIT /etc/systemd/system/squeezelite.service
+    if [ -f /etc/systemd/system/squeezelite.service ]; then
+      rm /etc/systemd/system/squeezelite.service
+    fi
 		ln -fs /data/plugins/music_service/squeezelite/unit/squeezelite.service /etc/systemd/system/squeezelite.service
 		systemctl daemon-reload
 		

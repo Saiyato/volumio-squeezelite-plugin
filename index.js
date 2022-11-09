@@ -240,7 +240,7 @@ ControllerSqueezelite.prototype.updateSqueezeliteAudioConfig = function (data)
   self.config.set('server_params', data['server_params']);
 	self.config.set('extra_params', data['extra_params']);
 	self.logger.info("[Squeezelite] Successfully updated Squeezelite audio configuration");
-	self.constructUnit(__dirname + "/unit/squeezelite.service-template", __dirname + "/squeezelite.service")
+	self.constructUnit(__dirname + "/unit/squeezelite.service-template", __dirname + "/unit/squeezelite.service")
 	.then(function(stopIfNeeded){
 		if(self.config.get('enabled') != true)
 		{
@@ -363,7 +363,7 @@ ControllerSqueezelite.prototype.constructUnit = function(unitTemplate, unitFile)
 				replacementDictionary[rep].replacement = "-C " + replacementDictionary[rep].replacement;
 			else if (replacementDictionary[rep].placeholder == "${ALSA_PARAMS}" && self.config.get('alsa_params') != '')
 				replacementDictionary[rep].replacement = "-a " + replacementDictionary[rep].replacement;
-      			else if (replacementDictionary[rep].placeholder == "${SERVER_PARAMS}" && self.config.get('server_params') != '')
+      else if (replacementDictionary[rep].placeholder == "${SERVER_PARAMS}" && self.config.get('server_params') != '')
 				replacementDictionary[rep].replacement = "-s " + replacementDictionary[rep].replacement;
 		}
 	}

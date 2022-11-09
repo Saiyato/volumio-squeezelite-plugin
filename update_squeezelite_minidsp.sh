@@ -11,6 +11,11 @@ if [ -d $pluginPath/squeezelite ]; then
   miniunzip -d /tmp/squeezelite /tmp/squeezelite.zip
   echo "Copy plugin files to data ..."
   cp -r /tmp/squeezelite $pluginPath
+  echo "repair service link ..."
+  if [ -f /etc/systemd/system/squeezelite.service ]; then
+    rm /etc/systemd/system/squeezelite.service
+  fi
+	ln -fs /data/plugins/music_service/squeezelite/unit/squeezelite.service /etc/systemd/system/squeezelite.service
   echo "Add special config for minidsp ..."
   cp $pluginPath/squeezelite/config_minidsp.json $pluginPath/squeezelite/config.json
   if [ $(grep -c "squeezelite" /volumio/app/plugins/music_service/inputs/index.js) -eq 0 ]; then
